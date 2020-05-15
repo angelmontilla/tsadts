@@ -38,33 +38,33 @@ export class AvlTree<T extends IadtsCloneable<T>> extends Tree<T> implements Ite
             iEqual = m(p.content, i);
         } else {
             iEqual = p.content.equal(i);
-        }
+        }        
 
-        // switch (iEqual) {
-        //     case 0:
-        //         bResult = false;
-        //         break;
-        //     case -1: // p < i
-        //         if (p.right !== undefined) {
-        //             bResult = this.internalInsert(p.right, i, m);
-        //         } else {
-        //             const newNode = new TreeNode(i, p);
-        //             p.right = newNode;
-        //             this.pIter = newNode;
-        //             this.count++;
-        //         }
-        //         break;
-        //     case 1: // p > i
-        //         if (p.left !== undefined ) {
-        //             bResult = this.internalInsert(p.left, i, m);
-        //         } else {
-        //             const newNode = new TreeNode(i, p);
-        //             p.left = newNode;
-        //             this.pIter = newNode;
-        //             this.count++;
-        //         }
-        //         break;
-        // }
+        switch (iEqual) {
+            case 0:
+                bResult = false;
+                break;
+            case -1: // p < i
+                if (p.right !== undefined) {
+                    bResult = this.internalInsert(p.right, i, m);
+                } else {
+                    const newNode = new TreeNode(i, 0, p);
+                    p.right = newNode;
+                    this.pIter = newNode;
+                    this.count++;
+                }
+                break;
+            case 1: // p > i
+                if (p.left !== undefined ) {
+                    bResult = this.internalInsert(p.left, i, m);
+                } else {
+                    const newNode = new TreeNode(i, 0, p);
+                    p.left = newNode;
+                    this.pIter = newNode;
+                    this.count++;
+                }
+                break;
+        }
 
         // Now let convert to avl
         let hLeft: number = (p.left !== undefined) ? p.left.height : 0;
