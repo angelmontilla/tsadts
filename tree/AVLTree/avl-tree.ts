@@ -73,9 +73,29 @@ export class AvlTree<T extends IadtsCloneable<T>> extends Tree<T> implements Ite
         p.height = Math.max(hLeft, hRight) + 1;
 
         // Get balance factor of this parent to check if this node became unbalanced
+        // if it becames unbalanced we have 4 posible cases:
         let balance: number = this.internalBalanced(p);
 
-        // if it becames unbalanced we have 4 posible cases:
+        if (balance > 1 && p.content.equal(p.left.content)<0) {
+            this.rightRotate(p);
+        }
+
+        if (balance > 1 && p.content.equal(p.left.content)>0) {
+            this.leftRotate(p.left);
+            this.rightRotate(p);
+        }
+
+        if (balance < -1 && p.content.equal(p.right.content)<0) {
+            this.leftRotate(p);
+        }
+
+        if (balance < -1 && p.content.equal(p.right.content)>0) {
+            this.rightRotate(p.right)
+            this.leftRotate(p);
+        }
+        
+
+        
 
         return bResult;
     }
