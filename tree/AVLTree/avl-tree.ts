@@ -38,33 +38,33 @@ export class AvlTree<T extends IadtsCloneable<T>> extends Tree<T> implements Ite
             iEqual = m(p.content, i);
         } else {
             iEqual = p.content.equal(i);
-        }
+        }        
 
-        // switch (iEqual) {
-        //     case 0:
-        //         bResult = false;
-        //         break;
-        //     case -1: // p < i
-        //         if (p.right !== undefined) {
-        //             bResult = this.internalInsert(p.right, i, m);
-        //         } else {
-        //             const newNode = new TreeNode(i, p);
-        //             p.right = newNode;
-        //             this.pIter = newNode;
-        //             this.count++;
-        //         }
-        //         break;
-        //     case 1: // p > i
-        //         if (p.left !== undefined ) {
-        //             bResult = this.internalInsert(p.left, i, m);
-        //         } else {
-        //             const newNode = new TreeNode(i, p);
-        //             p.left = newNode;
-        //             this.pIter = newNode;
-        //             this.count++;
-        //         }
-        //         break;
-        // }
+        switch (iEqual) {
+            case 0:
+                bResult = false;
+                break;
+            case -1: // p < i
+                if (p.right !== undefined) {
+                    bResult = this.internalInsert(p.right, i, m);
+                } else {
+                    const newNode = new TreeNode(i, 0, p);
+                    p.right = newNode;
+                    this.pIter = newNode;
+                    this.count++;
+                }
+                break;
+            case 1: // p > i
+                if (p.left !== undefined ) {
+                    bResult = this.internalInsert(p.left, i, m);
+                } else {
+                    const newNode = new TreeNode(i, 0, p);
+                    p.left = newNode;
+                    this.pIter = newNode;
+                    this.count++;
+                }
+                break;
+        }
 
         // Now let convert to avl
         let hLeft: number = (p.left !== undefined) ? p.left.height : 0;
@@ -73,9 +73,29 @@ export class AvlTree<T extends IadtsCloneable<T>> extends Tree<T> implements Ite
         p.height = Math.max(hLeft, hRight) + 1;
 
         // Get balance factor of this parent to check if this node became unbalanced
+        // if it becames unbalanced we have 4 posible cases:
         let balance: number = this.internalBalanced(p);
 
-        // if it becames unbalanced we have 4 posible cases:
+        if (balance > 1 && p.content.equal(p.left.content)<0) {
+            this.rightRotate(p);
+        }
+
+        if (balance > 1 && p.content.equal(p.left.content)>0) {
+            this.leftRotate(p.left);
+            this.rightRotate(p);
+        }
+
+        if (balance < -1 && p.content.equal(p.right.content)<0) {
+            this.leftRotate(p);
+        }
+
+        if (balance < -1 && p.content.equal(p.right.content)>0) {
+            this.rightRotate(p.right)
+            this.leftRotate(p);
+        }
+        
+
+        
 
         return bResult;
     }
