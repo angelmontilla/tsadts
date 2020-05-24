@@ -1,6 +1,6 @@
 import { AbsTree } from '../abs-tree';
 import { IadtsCloneable } from '../../iadts-cloneable';
-import { TreeNode } from '../../tree-node';
+import { TreeNode } from '../tree-node';
 import { ListDbl } from '../../list/double/list-dbl';
 import { DQueue } from '../../queue/dynamic/d-queue';
 import { TreeIterator } from '../tree-iterator';
@@ -48,7 +48,7 @@ export class Tree<T extends IadtsCloneable<T>> extends AbsTree<T> implements Ite
      * @memberof Tree
      */
     public size(): number {
-        return this.count+1;
+        return this.count + 1;
     }
 
     /**
@@ -169,37 +169,54 @@ export class Tree<T extends IadtsCloneable<T>> extends AbsTree<T> implements Ite
             // If node to delete is leaf
             if (this.isLeaf()) {
 
-                if (parent.left === this.pIter) {
-                    parent.left = undefined;
-                } else {
-                    parent.right = undefined;
-                }
+                if (parent !== undefined) {
+                    if (parent.left === this.pIter) {
+                        parent.left = undefined;
+                    } else {
+                        parent.right = undefined;
+                    }
 
-                this.pIter = null;
-                this.pIter = parent;
+                    this.pIter.content = null;
+                    this.pIter = null;
+                    this.pIter = parent;    
+                } else {
+                    this.pRoot = undefined;
+                    this.pIter = undefined;
+                    this.count = -1;
+                }
 
                 bResult = true;
             } else {
                 // if node has only one child
-                if (this.pIter.left === undefined || this.pIter.right === undefined) {
-                    const temp = (this.pIter.left === undefined) ? this.pIter.right : this.pIter.left;
+                if ((this.pIter.left === undefined && this.pIter.right !== undefined) ||
+                    (this.pIter.left !== undefined && this.pIter.left === undefined)) {
 
-                    temp.parent = parent;
+                    const temp = (this.pIter.left !== undefined) ? this.pIter.left : this.pIter.right;
 
-                    if (parent.left === this.pIter) {
-                        parent.left = temp;
+                    if (parent !== undefined) {
+                        temp.parent = parent;
+
+                        if (parent.left === this.pIter) {
+                            parent.left = temp;
+                        } else {
+                            parent.right = temp;
+                        }
                     } else {
-                        parent.right = temp;
+                        this.pRoot = temp;
+                        this.pIter = temp;
                     }
 
+                    this.pIter.content = null;
                     this.pIter = null;
                     this.pIter = parent;
+
+                    this.count--;
 
                     bResult = true;
                 } else { // Node has two childs
                     let workingPointer: TreeNode<T>;
                     let copyValue: T;
-                    let tempmove: TreeNode<T>;
+                    let tempmove: TreeNode<T>; // temporal iterator for to find the
 
                     workingPointer = this.pIter;
 
@@ -208,13 +225,15 @@ export class Tree<T extends IadtsCloneable<T>> extends AbsTree<T> implements Ite
                     while (tempmove.left !== undefined) {
                         tempmove = tempmove.left;
                     }
-                    copyValue = tempmove.content;
+                    copyValue = tempmove.content.clone();
 
                     // remove node for first greater
                     this.delete(copyValue);
 
                     // this node is now first greater
                     workingPointer.content = copyValue;
+
+                    this.count--;
 
                     bResult = true;
                 }
@@ -453,7 +472,7 @@ export class Tree<T extends IadtsCloneable<T>> extends AbsTree<T> implements Ite
                 if (p.right !== undefined) {
                     bResult = this.internalInsert(p.right, i, m);
                 } else {
-                    const newNode = new TreeNode(i, 0, p);
+                    const newNode = new TreeNode(i, p);
                     p.right = newNode;
                     this.pIter = newNode;
                     this.count++;
@@ -463,7 +482,7 @@ export class Tree<T extends IadtsCloneable<T>> extends AbsTree<T> implements Ite
                 if (p.left !== undefined ) {
                     bResult = this.internalInsert(p.left, i, m);
                 } else {
-                    const newNode = new TreeNode(i, 0, p);
+                    const newNode = new TreeNode(i, p);
                     p.left = newNode;
                     this.pIter = newNode;
                     this.count++;

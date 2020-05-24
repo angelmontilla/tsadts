@@ -1,11 +1,11 @@
-import { IadtsCloneable } from './iadts-cloneable';
+import { IadtsCloneable } from '../iadts-cloneable';
 /**
  * @classdesc Class node for tree
  *
  * @copyright (c)2020 Angel Manuel Montilla Jiménez
  * @license MIT license
  */
-export class TreeNode<T> implements IadtsCloneable<TreeNode<T>> {
+export class TreeNode<T extends IadtsCloneable<T>> implements IadtsCloneable<TreeNode<T>> {
     /**
      * Creates an instance of TreeNode.
      * @param {T} [_content] - Content into node
@@ -15,11 +15,10 @@ export class TreeNode<T> implements IadtsCloneable<TreeNode<T>> {
      * @param {TreeNode<T>} [_ptrrgt] - right child reference
      * @memberof TreeNode
      */
-    constructor(private _content?: T,
-                        private _height?: number,
-                        private _parent?: TreeNode<T>,
-                        private _left?: TreeNode<T>,
-                        private _right?: TreeNode<T>) {
+    constructor(protected _content?: T,
+                        protected _parent?: TreeNode<T>,
+                        protected _left?: TreeNode<T>,
+                        protected _right?: TreeNode<T>) {
         if (_content === null) {
             this._content = undefined;
         }
@@ -52,14 +51,6 @@ export class TreeNode<T> implements IadtsCloneable<TreeNode<T>> {
      */
     set content(c: T) {
         this._content = c;
-    }
-
-    get height(): number {
-        return this._height;
-    }
-
-    set height(n: number) {
-        this._height = n;
     }
 
     /**
@@ -102,19 +93,29 @@ export class TreeNode<T> implements IadtsCloneable<TreeNode<T>> {
     clone(): TreeNode<T> {
         let t: TreeNode<T>;
 
-        t = new TreeNode(this.content, this.height, this.parent, this.left, this.right);
+        t = new TreeNode(this.content.clone(), this.parent, this.left, this.right);
 
         return t;
     }
 
+    show?(): void {
+        console.log('{[parent] -> ' + this.parent.content.toString() +
+                    ' [left] -> ' + this.left.content.toString() +
+                    ' [right] -> ' + this.right.content.toString() +
+                    ' [content] -> ' + this.content.toString() + '}');
+    }
+
     equal(p: TreeNode<T>): number {
-        return undefined;
+        return this.content.equal(p.content);
     }
 
     toString?(): string {
         let s: string;
 
-        s = '' + this.content + '';
+        s = '{[parent] -> ' + this.parent.content.toString() +
+            ' [left] -> ' + this.left.content.toString() +
+            ' [right] -> ' + this.right.content.toString() +
+            ' [content] -> ' + this.content.toString() + '}';
 
         return s;
     }

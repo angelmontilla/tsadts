@@ -1,6 +1,7 @@
 import { ResultIteration } from '../result-iteration';
-import { TreeNode } from '../tree-node';
+import { TreeNode } from './tree-node';
 import { ListDbl } from '../list/double/list-dbl';
+import { IadtsCloneable } from '../iadts-cloneable';
 
 /**
  *
@@ -10,7 +11,7 @@ import { ListDbl } from '../list/double/list-dbl';
  * @implements {Iterator<T>}
  * @template T
  */
-export class TreeIterator<T> implements Iterator<T> {
+export class TreeIterator<T extends IadtsCloneable<T>> implements Iterator<T> {
     private pointer: TreeNode<T>;
 
     private list: ListDbl<TreeNode<T>>;
@@ -65,7 +66,7 @@ export class TreeIterator<T> implements Iterator<T> {
         item = null;
 
         return item;
-    }    
+    }
 
 
     /* INTERNAL MECHANICS */
