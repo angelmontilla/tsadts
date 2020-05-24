@@ -11,11 +11,12 @@ It implements:
 - Queue and DQueue for FIFO logic.
 - List and DblList for accessing data in a List distribution.
 - Tree for ordering an other kind of tree's operations.
-- And Graphs directed or not.
+- And Graphs directed.
 
 It incorpores characteristics as:
 - Iterators
 - OOP design wit clases for to extend
+- Dijsktra minimun path as jasmine test
 
 And solve typicall problems like finding, ordering, ...
 
